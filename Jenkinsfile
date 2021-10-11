@@ -29,7 +29,7 @@ pipeline {
 				}
 			}
 			steps {
-				withCoverityEnvironment(coverityInstanceUrl: "$CONNECT", projectName: "$PROJECT", streamName: "$PROJECT-$BRANCH_NAME") {
+				withCoverityEnvironment(coverityInstanceUrl: "$CONNECT", projectName: "$PROJECT", streamName: "$PROJECT") {
 					sh '''
 						cov-build --dir idir --fs-capture-search $WORKSPACE mvn -B clean package -DskipTests
 						cov-analyze --dir idir --ticker-mode none --strip-path $WORKSPACE --webapp-security
@@ -51,7 +51,7 @@ pipeline {
 				}
 			}
 			steps {
-				withCoverityEnvironment(coverityInstanceUrl: "$CONNECT", projectName: "$PROJECT", streamName: "$PROJECT-$CHANGE_TARGET") {
+				withCoverityEnvironment(coverityInstanceUrl: "$CONNECT", projectName: "$PROJECT", streamName: "$PROJECT") {
 					sh '''
 						export CHANGE_SET=$(git --no-pager diff origin/$CHANGE_TARGET --name-only)
 						[ -z "$CHANGE_SET" ] && exit 0
