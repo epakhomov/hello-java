@@ -8,12 +8,12 @@ pipeline {
 	stages {
 		stage('Build') {
 			steps {
-				sh 'mvn -B compile'
+				sh 'mvn clean compile'
 			}
 		}
 		stage('Test') {
 			steps {
-				sh 'mvn -B test'
+				sh 'mvn clean compile'
 			}
 		}
 		stage('Coverity Full Scan') {
@@ -26,7 +26,7 @@ pipeline {
 			steps {
 				withCoverityEnvironment(coverityInstanceUrl: "$CONNECT", projectName: "$PROJECT", streamName: "$PROJECT-$BRANCH_NAME") {
 					sh '''
-						cov-build --dir idir --fs-capture-search $WORKSPACE mvn -B clean package -DskipTests
+						cov-build --dir idir --fs-capture-search $WORKSPACE mvn clean compile
 						cov-analyze --dir idir --ticker-mode none --strip-path $WORKSPACE --webapp-security
 						cov-commit-defects --dir idir --ticker-mode none --url $COV_URL --stream $COV_STREAM \
 							--description $BUILD_TAG --target Linux_x86_64 --version $GIT_COMMIT
@@ -50,7 +50,7 @@ pipeline {
 					sh '''
 						export CHANGE_SET=$(git --no-pager diff origin/$CHANGE_TARGET --name-only)
 						[ -z "$CHANGE_SET" ] && exit 0
-						cov-run-desktop --dir idir --url $COV_URL --stream $COV_STREAM --build mvn -B clean package -DskipTests
+						cov-run-desktop --dir idir --url $COV_URL --stream $COV_STREAM --build mvn clean compile
 						cov-run-desktop --dir idir --url $COV_URL --stream $COV_STREAM --present-in-reference false \
 							--ignore-uncapturable-inputs true --text-output issues.txt $CHANGE_SET
 						if [ -s issues.txt ]; then cat issues.txt; touch issues_found; fi
@@ -66,7 +66,7 @@ pipeline {
 				expression { BRANCH_NAME ==~ /(master|stage|release)/ }
 			}
 			steps {
-				sh 'mvn -B install'
+				sh 'mvn clean compile'
 			}
 		}
 	}
