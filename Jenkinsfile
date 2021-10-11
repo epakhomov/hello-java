@@ -2,13 +2,8 @@ pipeline {
 	agent any
 
 	environment {
-		CONNECT = 'https://coverity.chuckaude.com:8443'
+		CONNECT = 'http://localhost:8888'
 		PROJECT = 'hello-java'
-	}
-
-	tools {
-		jdk 'openjdk-11'
-	}
 
 	stages {
 		stage('Build') {
